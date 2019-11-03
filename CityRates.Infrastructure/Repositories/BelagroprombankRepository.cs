@@ -1,17 +1,20 @@
-﻿using System;
+﻿using CityRates.Core.Domain;
+using CityRates.Core.Domain.Belagroprombank;
+using CityRates.Core.Enums;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Xml.Serialization;
-using static System.String;
 
-namespace CityRates.Domain.Bank.Belagroprombank.Repositories
+namespace CityRates.Infrastructure.Repositories
 {
     public class BelagroprombankRepository
     {
-        private List<BelagroprombankDomain> GetBankDepartments()
+        private List<Belagroprombank> GetBankDepartments()
         {
             var apiRequest =
                 WebRequest.Create("https://belapb.by/ExBanks.php") as HttpWebRequest;
@@ -61,40 +64,37 @@ namespace CityRates.Domain.Bank.Belagroprombank.Repositories
             return result;
         }
 
-        private List<GlobalCurrencyDomain> GetCurrencies()
+        private List<GlobalCurrency> GetCurrencies()
         {
             var bankRates = GetBankRates();
 
-            List<GlobalCurrencyDomain> globalCurrencies = new List<GlobalCurrencyDomain>();
+            List<GlobalCurrency> globalCurrencies = new List<GlobalCurrency>();
 
             foreach (var currency in bankRates.Currency)
             {
-                //Colors color = (Colors)System.Enum.Parse(typeof(Colors), "Green");
-
                 CurrencyType type = (CurrencyType)Enum.Parse(typeof(CurrencyType), currency.CharCode);
 
 
-                var globalDomain = new GlobalCurrencyDomain(
-                        fromCurrency: CurrencyType.BYN,
-                        toCurrency: type,
-                        sellsAt: currency.RateSell,
-                        buysAt: currency.RateBuy,
-                        filialId: currency.BankId,
-                        bankType: BankType.Belagro
-                    );
+                var globalDomain = new GlobalCurrency()
+                {
+                    FilialId = currency.BankId,
+                    FromCurrency = CurrencyType.BYN,
+                    ToCurrency = type,
+                    BankSellsAt = currency.RateSell,
+                    BankBuysAt = currency.RateBuy,
+                    BankType = BankType.Belagroprombank
+                }; 
 
                 globalCurrencies.Add(globalDomain);
             }
-
-            Console.WriteLine(globalCurrencies);
 
             return globalCurrencies;
 
         }
 
-        public List<GlobalDepartmentDomain> GetDepartmentsWithRates()
+        public List<GlobalDepartment> GetDepartmentsWithRates()
         {
-            var globalDepartments = new List<GlobalDepartmentDomain>();
+            var globalDepartments = new List<GlobalDepartment>();
             var bankCurrencies = GetCurrencies();
             var bankDepartments = GetBankDepartments();
 
@@ -102,10 +102,10 @@ namespace CityRates.Domain.Bank.Belagroprombank.Repositories
 
             foreach (var group in groupedCurrencies)
             {
-                var globalDep = new GlobalDepartmentDomain { BankType = BankType.Belagro };
+                var globalDep = new GlobalDepartment { BankType = BankType.Belagroprombank };
                 var bank = bankDepartments.Single(dep => dep.Id == group.Key.ToString());
 
-                if (IsNullOrEmpty(bank.BankLatitude) || IsNullOrEmpty(bank.BankLongitude))
+                if (string.IsNullOrEmpty(bank.BankLatitude) || string.IsNullOrEmpty(bank.BankLongitude))
                 {
                     continue;
                 }

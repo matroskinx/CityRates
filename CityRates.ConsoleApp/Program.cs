@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using CityRates.Domain;
-using CityRates.Domain.Bank.Belagroprombank.Repositories;
-using CityRates.Domain.Bank.Belarusbank.Repositories;
+using CityRates.Infrastructure.Repositories;
 
 namespace CityRates.ConsoleApp
 {
@@ -10,17 +7,15 @@ namespace CityRates.ConsoleApp
     {
         static void Main(string[] args)
         {
-            var repo = new BelagroprombankRepository();
-            var belRepo = new BelarusbankRepository();
-            var deparments = new List<GlobalDepartmentDomain>();
-
-            var belagroDeps = repo.GetDepartmentsWithRates();
-            var belarusDeps = belRepo.GetDepartmentsWithRates();
-
-            deparments.AddRange(belagroDeps);
-            deparments.AddRange(belarusDeps);
-
-            Console.WriteLine("Total departments: " + deparments.Count);
+            var belagroprombunkRepo = new BelagroprombankRepository();
+            var belarusbunkRepo = new BelarusbankRepository();
+            //belagroprombunkRepo.GetDepartmentsWithRates();
+            var aa = belarusbunkRepo.GetDepartmentsWithRates();
+            //foreach (var a in aa)
+            //{
+            //    Console.WriteLine(a.Lat);
+            //}
+           
         }
     }
 }

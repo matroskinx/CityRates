@@ -1,6 +1,6 @@
-﻿namespace CityRates.Domain.Bank.Belarusbank
+﻿namespace CityRates.Core.Domain.Belarusbank
 {
-    public class BelarusbankCurrencyDomain
+    public class BelarusbankCurrency
     {
         public double USD_in { get; set; }
         public double USD_out { get; set; }

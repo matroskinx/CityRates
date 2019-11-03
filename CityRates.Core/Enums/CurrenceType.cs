@@ -1,4 +1,4 @@
-﻿namespace CityRates.Domain.Bank
+﻿namespace CityRates.Core.Enums
 {
     public enum CurrencyType
     {
