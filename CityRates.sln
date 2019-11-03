@@ -5,9 +5,11 @@ VisualStudioVersion = 15.0.28307.645
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CityRates.ConsoleApp", "CityRates.ConsoleApp\CityRates.ConsoleApp.csproj", "{53EC14FD-8AB2-4E0B-B59B-443CF13D7907}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CityRates.Core", "CityRates.Core\CityRates.Core.csproj", "{D34165F2-DA22-4F6E-83A2-CE3BDCEF2E93}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CityRates.Core", "CityRates.Core\CityRates.Core.csproj", "{D34165F2-DA22-4F6E-83A2-CE3BDCEF2E93}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CityRates.Infrastructure", "CityRates.Infrastructure\CityRates.Infrastructure.csproj", "{E200E354-2B49-4031-A354-1BFB1E35730A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CityRates.Infrastructure", "CityRates.Infrastructure\CityRates.Infrastructure.csproj", "{E200E354-2B49-4031-A354-1BFB1E35730A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionApp", "FunctionApp\FunctionApp.csproj", "{CF83647B-23AF-47CF-9A62-84BA20F87336}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{E200E354-2B49-4031-A354-1BFB1E35730A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E200E354-2B49-4031-A354-1BFB1E35730A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E200E354-2B49-4031-A354-1BFB1E35730A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF83647B-23AF-47CF-9A62-84BA20F87336}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF83647B-23AF-47CF-9A62-84BA20F87336}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF83647B-23AF-47CF-9A62-84BA20F87336}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF83647B-23AF-47CF-9A62-84BA20F87336}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
