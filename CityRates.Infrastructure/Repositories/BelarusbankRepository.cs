@@ -9,10 +9,11 @@ using CityRates.Core.Enums;
 using System.Globalization;
 using CityRates.Core.Domain;
 using System.Linq;
+using CityRates.Core.Interfaces.Belarusbank;
 
 namespace CityRates.Infrastructure.Repositories
 {
-    public class BelarusbankRepository
+    public class BelarusbankRepository: IBelarusbankRepository
     {
         private List<Belarusbank> GetBankDepartments()
         {

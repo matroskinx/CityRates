@@ -1,4 +1,5 @@
 ﻿using System;
+using CityRates.Core.Services;
 using CityRates.Infrastructure.Repositories;
 
 namespace CityRates.ConsoleApp
@@ -7,15 +8,14 @@ namespace CityRates.ConsoleApp
     {
         static void Main(string[] args)
         {
-            var belagroprombunkRepo = new BelagroprombankRepository();
-            var belarusbunkRepo = new BelarusbankRepository();
-            //belagroprombunkRepo.GetDepartmentsWithRates();
-            var aa = belarusbunkRepo.GetDepartmentsWithRates();
-            //foreach (var a in aa)
-            //{
-            //    Console.WriteLine(a.Lat);
-            //}
-           
+            var belarusbankRepo = new BelarusbankRepository();
+            var belarusbankService = new BelarusbankService(belarusbankRepo);
+            belarusbankService.GetDepartmentsWithRates();
+
+            var belagroprombankRepo = new BelagroprombankRepository();
+            var belagroprombankService = new BelagroprombankService(belagroprombankRepo);
+            belagroprombankService.GetDepartmentsWithRates();
+
         }
     }
 }

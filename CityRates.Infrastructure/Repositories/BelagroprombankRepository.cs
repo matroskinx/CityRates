@@ -1,6 +1,7 @@
 ﻿using CityRates.Core.Domain;
 using CityRates.Core.Domain.Belagroprombank;
 using CityRates.Core.Enums;
+using CityRates.Core.Interfaces.Belagroprombank;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -12,7 +13,7 @@ using System.Xml.Serialization;
 
 namespace CityRates.Infrastructure.Repositories
 {
-    public class BelagroprombankRepository
+    public class BelagroprombankRepository: IBelagroprombankRepository
     {
         private List<Belagroprombank> GetBankDepartments()
         {
@@ -41,7 +42,6 @@ namespace CityRates.Infrastructure.Repositories
         private DailyExRates GetBankRates()
         {
             var date = DateTime.Now.ToString("MM/dd/yyyy");
-            Console.WriteLine(date);
             var apiRequest =
                 WebRequest.Create("https://belapb.by/CashExRatesDaily.php?ondate=" + date) as HttpWebRequest;
 

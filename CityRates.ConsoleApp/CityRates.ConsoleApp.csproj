@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CityRates.Core\CityRates.Core.csproj" />
     <ProjectReference Include="..\CityRates.Infrastructure\CityRates.Infrastructure.csproj" />
   </ItemGroup>
 
