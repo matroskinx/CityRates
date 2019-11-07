@@ -54,7 +54,17 @@ namespace CityRates.Infrastructure.Repositories
                     continue;
                 }
 
-                globalDep.WorkInfo = WorkTimeUtils.parseDateTimeFromBelarusbank(bank);
+                try
+                {
+                    globalDep.WorkInfo = WorkTimeUtils.parseDateTimeFromBelarusbank(bank);
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Caught exception for worktime: " + bank.InfoWorktime);
+                    continue;
+                }
+
+
                 globalDep.Latitude = float.Parse(bank.GpsX, CultureInfo.InvariantCulture);
                 globalDep.Longitude = float.Parse(bank.GpsY, CultureInfo.InvariantCulture);
 

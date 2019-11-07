@@ -13,10 +13,11 @@ using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using CityRates.Core.Utils;
 
 namespace CityRates.Infrastructure.Repositories
 {
-    public class BelagroprombankRepository: IBelagroprombankRepository
+    public class BelagroprombankRepository : IBelagroprombankRepository
     {
         private DocumentClient _client;
         private ConnectionOptions _connectionOptions;
@@ -29,7 +30,7 @@ namespace CityRates.Infrastructure.Repositories
 
         public BelagroprombankDomain GetBelagroprombankInfo()
         {
-            var json = _client.ReadDocumentAsync(UriFactory.CreateDocumentUri(_connectionOptions.DatabaseName, 
+            var json = _client.ReadDocumentAsync(UriFactory.CreateDocumentUri(_connectionOptions.DatabaseName,
                 _connectionOptions.CollectionName, "Belagroprombank")).Result;
             BelagroprombankDomain belagroprombankDomain = JsonConvert.DeserializeObject<BelagroprombankDomain>(json.Resource.ToString());
             return belagroprombankDomain;
@@ -51,6 +52,16 @@ namespace CityRates.Infrastructure.Repositories
 
                 if (bank == null || string.IsNullOrEmpty(bank.BankLatitude) || string.IsNullOrEmpty(bank.BankLongitude))
                 {
+                    continue;
+                }
+
+                try
+                {
+                    globalDep.WorkInfo = WorkTimeUtils.parseDateTimeFromBelagroprombank(bank);
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Caught exception for worktime: " + bank.BankWorkTimeRu);
                     continue;
                 }
 
@@ -83,12 +94,12 @@ namespace CityRates.Infrastructure.Repositories
             {
                 Exception baseException = e.GetBaseException();
             }
-            
+
             CreateAsqDocumentIfNotExists(_connectionOptions.DatabaseName, _connectionOptions.CollectionName, belagroprombankDomain).Wait();
 
             return belagroprombankDomain;
         }
-        
+
         private async Task GetStartedDemo()
         {
             await _client.CreateDatabaseIfNotExistsAsync(new Database { Id = _connectionOptions.DatabaseName });
@@ -190,6 +201,6 @@ namespace CityRates.Infrastructure.Repositories
             return globalCurrencies;
 
         }
-        
+
     }
 }
