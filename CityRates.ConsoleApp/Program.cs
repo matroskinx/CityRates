@@ -16,10 +16,12 @@ namespace CityRates.ConsoleApp
                 "BelagroprombankCollection"
             );
 
-            var belagroprombankRepo = new BelagroprombankRepository(connectionOptions);
-            var belagroprombankService = new BelagroprombankService(belagroprombankRepo);
-            belagroprombankService.UpdateBelagroprombankInfo();
+            //var belagroprombankRepo = new BelagroprombankRepository(connectionOptions);
+            //var belagroprombankService = new BelagroprombankService(belagroprombankRepo);
+            //belagroprombankService.UpdateBelagroprombankInfo();
 
+            var belRepo = new BelarusbankRepository(connectionOptions);
+            belRepo.UpdateBelarusbankInfo();
             //var connectionOptions = new ConnectionOptions(
             //    "https://city-rates.documents.azure.com:443/",
             //    "PERNkHuRBu1W9e9oeIznbqZZ6PUDg9OOxp31pIxRfc0gw52p5GRvPo0bToNGTtoN5CQgGPC5Y3b2nDfIyMnMJg==",

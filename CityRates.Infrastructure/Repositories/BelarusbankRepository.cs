@@ -8,6 +8,7 @@ using CityRates.Core.Domain.Belarusbank;
 using CityRates.Core.Enums;
 using System.Globalization;
 using CityRates.Core.Domain;
+using CityRates.Core.Utils;
 using System.Linq;
 using CityRates.Core.Interfaces.Belarusbank;
 using Microsoft.Azure.Documents.Client;
@@ -16,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace CityRates.Infrastructure.Repositories
 {
-    public class BelarusbankRepository: IBelarusbankRepository
+    public class BelarusbankRepository : IBelarusbankRepository
     {
         private DocumentClient _client;
         private ConnectionOptions _connectionOptions;
@@ -53,6 +54,7 @@ namespace CityRates.Infrastructure.Repositories
                     continue;
                 }
 
+                globalDep.WorkInfo = WorkTimeUtils.parseDateTimeFromBelarusbank(bank);
                 globalDep.Latitude = float.Parse(bank.GpsX, CultureInfo.InvariantCulture);
                 globalDep.Longitude = float.Parse(bank.GpsY, CultureInfo.InvariantCulture);
 
@@ -187,7 +189,8 @@ namespace CityRates.Infrastructure.Repositories
 
                 if (department.CNY_in != 0 && department.CNY_out != 0)
                 {
-                    globalCurrencies.Add(new GlobalCurrency() { 
+                    globalCurrencies.Add(new GlobalCurrency()
+                    {
                         FilialId = department.filial_id,
                         FromCurrency = CurrencyType.BYN,
                         ToCurrency = CurrencyType.CNY,

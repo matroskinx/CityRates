@@ -15,6 +15,8 @@ namespace CityRates.Core.Domain
 
         public List<GlobalCurrency> Currencies { get; set; } = new List<GlobalCurrency>();
 
+        public List<WorkTime> WorkInfo { get; set; } = new List<WorkTime>();
+
         // TODO: get work hours
     }
 }
