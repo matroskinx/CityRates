@@ -1,11 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 using CityRates.Core.Domain;
 using CityRates.Core.Interfaces.Belagroprombank;
 using CityRates.Core.Interfaces.Belarusbank;
 
 namespace CityRates.Core.Services
 {
-    public class BelarusbankService : IBelagroprombankService
+    public class BelarusbankService : IBelarusbankService
     {
         private IBelarusbankRepository _belarusbankRepository;
 
@@ -13,9 +15,15 @@ namespace CityRates.Core.Services
         {
             _belarusbankRepository = belarusbankRepository;
         }
-        public List<GlobalDepartment> GetDepartmentsWithRates()
+
+        public BelarusbankDomain GetBelarusbankInfo()
         {
-            return _belarusbankRepository.GetDepartmentsWithRates();
+            return _belarusbankRepository.GetBelarusbankInfo();
+        }
+
+        public BelarusbankDomain UpdateBelarusbankInfo()
+        {
+            return _belarusbankRepository.UpdateBelarusbankInfo();
         }
     }
 }

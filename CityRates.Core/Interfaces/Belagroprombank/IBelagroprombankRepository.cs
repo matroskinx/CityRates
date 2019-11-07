@@ -5,6 +5,7 @@ namespace CityRates.Core.Interfaces.Belagroprombank
 {
     public interface IBelagroprombankRepository
     {
-        List<GlobalDepartment> GetDepartmentsWithRates();
+        BelagroprombankDomain UpdateBelagroprombankInfo();
+        BelagroprombankDomain GetBelagroprombankInfo();
     }
 }

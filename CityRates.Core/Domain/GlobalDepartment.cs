@@ -9,9 +9,9 @@ namespace CityRates.Core.Domain
     {
         public BankType BankType { get; set; }
 
-        public float Lat { get; set; }
+        public float Latitude { get; set; }
 
-        public float Lng { get; set; }
+        public float Longitude { get; set; }
 
         public List<GlobalCurrency> Currencies { get; set; } = new List<GlobalCurrency>();
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using CityRates.Core.Domain;
 using CityRates.Core.Services;
 using CityRates.Infrastructure.Repositories;
 
@@ -8,13 +9,27 @@ namespace CityRates.ConsoleApp
     {
         static void Main(string[] args)
         {
-            var belarusbankRepo = new BelarusbankRepository();
-            var belarusbankService = new BelarusbankService(belarusbankRepo);
-            belarusbankService.GetDepartmentsWithRates();
+            var connectionOptions = new ConnectionOptions(
+                "https://city-rates.documents.azure.com:443/",
+                "PERNkHuRBu1W9e9oeIznbqZZ6PUDg9OOxp31pIxRfc0gw52p5GRvPo0bToNGTtoN5CQgGPC5Y3b2nDfIyMnMJg==",
+                "CityRatesDB",
+                "BelagroprombankCollection"
+            );
 
-            var belagroprombankRepo = new BelagroprombankRepository();
+            var belagroprombankRepo = new BelagroprombankRepository(connectionOptions);
             var belagroprombankService = new BelagroprombankService(belagroprombankRepo);
-            belagroprombankService.GetDepartmentsWithRates();
+            belagroprombankService.UpdateBelagroprombankInfo();
+
+            //var connectionOptions = new ConnectionOptions(
+            //    "https://city-rates.documents.azure.com:443/",
+            //    "PERNkHuRBu1W9e9oeIznbqZZ6PUDg9OOxp31pIxRfc0gw52p5GRvPo0bToNGTtoN5CQgGPC5Y3b2nDfIyMnMJg==",
+            //    "CityRatesDB",
+            //    "BelarusbankCollection"
+            //);
+
+            //var belarusbankRepository = new BelarusbankRepository(connectionOptions);
+            //var belarusbankService = new BelarusbankService(belarusbankRepository);
+            //var result = belarusbankService.UpdateBelarusbankInfo();
 
         }
     }

@@ -6,6 +6,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using CityRates.Core.Domain;
 
 namespace FunctionApp
 {
@@ -17,11 +18,18 @@ namespace FunctionApp
             ILogger log)
         {
 
-            var belagroprombankRepo = new BelagroprombankRepository();
-            var belagroprombankService = new BelagroprombankService(belagroprombankRepo);
-            var belagroprombank = belagroprombankService.GetDepartmentsWithRates();
+            var connectionOptions = new ConnectionOptions(
+                "https://city-rates.documents.azure.com:443/",
+                "PERNkHuRBu1W9e9oeIznbqZZ6PUDg9OOxp31pIxRfc0gw52p5GRvPo0bToNGTtoN5CQgGPC5Y3b2nDfIyMnMJg==",
+                "CityRatesDB",
+                "BelagroprombankCollection"
+            );
 
-            return new OkObjectResult(belagroprombank);
+            var belagroprombankRepo = new BelagroprombankRepository(connectionOptions);
+            var belagroprombankService = new BelagroprombankService(belagroprombankRepo);
+            var result = belagroprombankService.GetBelagroprombankInfo();
+
+            return new OkObjectResult(result);
         }
     }
 }

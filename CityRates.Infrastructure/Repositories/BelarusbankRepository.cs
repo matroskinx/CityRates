@@ -10,11 +10,110 @@ using System.Globalization;
 using CityRates.Core.Domain;
 using System.Linq;
 using CityRates.Core.Interfaces.Belarusbank;
+using Microsoft.Azure.Documents.Client;
+using Microsoft.Azure.Documents;
+using System.Threading.Tasks;
 
 namespace CityRates.Infrastructure.Repositories
 {
     public class BelarusbankRepository: IBelarusbankRepository
     {
+        private DocumentClient _client;
+        private ConnectionOptions _connectionOptions;
+
+        public BelarusbankRepository(ConnectionOptions connectionOptions)
+        {
+            _connectionOptions = connectionOptions;
+            _client = new DocumentClient(new Uri(_connectionOptions.EndpointUrl), _connectionOptions.PrimaryKey);
+        }
+
+        public BelarusbankDomain GetBelarusbankInfo()
+        {
+            var json = _client.ReadDocumentAsync(UriFactory.CreateDocumentUri(_connectionOptions.DatabaseName,
+                _connectionOptions.CollectionName, "Belarusbank")).Result;
+            BelarusbankDomain belagroprombankDomain = JsonConvert.DeserializeObject<BelarusbankDomain>(json.Resource.ToString());
+            return belagroprombankDomain;
+        }
+
+        public BelarusbankDomain UpdateBelarusbankInfo()
+        {
+            var globalDepartments = new List<GlobalDepartment>();
+            var bankCurrencies = GetCurrencies();
+            var bankDepartments = GetBankDepartments();
+
+            var groupedCurrencies = bankCurrencies.GroupBy(c => c.FilialId);
+
+            foreach (var group in groupedCurrencies)
+            {
+                var globalDep = new GlobalDepartment { BankType = BankType.Belarusbank };
+                var bank = bankDepartments.Single(dep => dep.FilialId == group.Key);
+
+                if (string.IsNullOrEmpty(bank.GpsX) || string.IsNullOrEmpty(bank.GpsY))
+                {
+                    continue;
+                }
+
+                globalDep.Latitude = float.Parse(bank.GpsX, CultureInfo.InvariantCulture);
+                globalDep.Longitude = float.Parse(bank.GpsY, CultureInfo.InvariantCulture);
+
+                foreach (var currency in group)
+                {
+                    globalDep.Currencies.Add(currency);
+                }
+                globalDepartments.Add(globalDep);
+            }
+
+            var belarucbankDomain = new BelarusbankDomain()
+            {
+                Id = "Belarusbank",
+                Departments = globalDepartments
+            };
+
+            BelarusbankRepository b = new BelarusbankRepository(_connectionOptions);
+            try
+            {
+                b.GetStartedDemo().Wait();
+            }
+            catch (DocumentClientException de)
+            {
+                Exception baseException = de.GetBaseException();
+            }
+            catch (Exception e)
+            {
+                Exception baseException = e.GetBaseException();
+            }
+
+            CreateAsqDocumentIfNotExists(_connectionOptions.DatabaseName, _connectionOptions.CollectionName, belarucbankDomain).Wait();
+
+
+            return belarucbankDomain;
+        }
+
+        private async Task GetStartedDemo()
+        {
+            await _client.CreateDatabaseIfNotExistsAsync(new Database { Id = _connectionOptions.DatabaseName });
+            await _client.CreateDocumentCollectionIfNotExistsAsync(UriFactory.CreateDatabaseUri(_connectionOptions.DatabaseName), new DocumentCollection { Id = _connectionOptions.CollectionName });
+        }
+
+        private async Task CreateAsqDocumentIfNotExists(string databaseName, string collectionName, BelarusbankDomain belarusbankDomain)
+        {
+            try
+            {
+                await _client.ReadDocumentAsync(UriFactory.CreateDocumentUri(databaseName, collectionName, belarusbankDomain.Id));
+            }
+            catch (DocumentClientException de)
+            {
+                if (de.StatusCode == HttpStatusCode.NotFound)
+                {
+                    await _client.CreateDocumentAsync(UriFactory.CreateDocumentCollectionUri(databaseName, collectionName), belarusbankDomain);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
         private List<Belarusbank> GetBankDepartments()
         {
             var apiRequest =
@@ -231,38 +330,6 @@ namespace CityRates.Infrastructure.Repositories
             }
 
             return globalCurrencies;
-        }
-
-
-        public List<GlobalDepartment> GetDepartmentsWithRates()
-        {
-            var globalDepartments = new List<GlobalDepartment>();
-            var bankCurrencies = GetCurrencies();
-            var bankDepartments = GetBankDepartments();
-
-            var groupedCurrencies = bankCurrencies.GroupBy(c => c.FilialId);
-
-            foreach (var group in groupedCurrencies)
-            {
-                var globalDep = new GlobalDepartment { BankType = BankType.Belarusbank };
-                var bank = bankDepartments.Single(dep => dep.FilialId == group.Key);
-
-                if (string.IsNullOrEmpty(bank.GpsX) || string.IsNullOrEmpty(bank.GpsY))
-                {
-                    continue;
-                }
-
-                globalDep.Lat = float.Parse(bank.GpsX, CultureInfo.InvariantCulture);
-                globalDep.Lng = float.Parse(bank.GpsY, CultureInfo.InvariantCulture);
-
-                foreach (var currency in group)
-                {
-                    globalDep.Currencies.Add(currency);
-                }
-                globalDepartments.Add(globalDep);
-            }
-
-            return globalDepartments;
         }
     }
 }

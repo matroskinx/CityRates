@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CityRates.Core", "CityRates
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CityRates.Infrastructure", "CityRates.Infrastructure\CityRates.Infrastructure.csproj", "{E200E354-2B49-4031-A354-1BFB1E35730A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionApp", "FunctionApp\FunctionApp.csproj", "{CF83647B-23AF-47CF-9A62-84BA20F87336}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunctionApp", "FunctionApp\FunctionApp.csproj", "{CF83647B-23AF-47CF-9A62-84BA20F87336}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

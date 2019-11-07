@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using CityRates.Core.Domain;
+﻿using CityRates.Core.Domain;
 using CityRates.Core.Interfaces.Belagroprombank;
 
 namespace CityRates.Core.Services
 {
-    public class BelagroprombankService : IBelagroprombankRepository
+    public class BelagroprombankService : IBelagroprombankService
     {
         private IBelagroprombankRepository _belagroprombankRepository;
 
@@ -12,9 +11,15 @@ namespace CityRates.Core.Services
         {
             _belagroprombankRepository = belagroprombankRepository;
         }
-        public List<GlobalDepartment> GetDepartmentsWithRates()
+
+        public BelagroprombankDomain GetBelagroprombankInfo()
         {
-            return _belagroprombankRepository.GetDepartmentsWithRates();
+            return _belagroprombankRepository.GetBelagroprombankInfo();
+        }
+
+        public BelagroprombankDomain UpdateBelagroprombankInfo()
+        {
+            return _belagroprombankRepository.UpdateBelagroprombankInfo();
         }
     }
 }

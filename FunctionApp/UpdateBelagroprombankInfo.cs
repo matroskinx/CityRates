@@ -1,35 +1,38 @@
+using System;
+using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using CityRates.Core.Domain;
 using CityRates.Infrastructure.Repositories;
 using CityRates.Core.Services;
-using CityRates.Core.Domain;
 
 namespace FunctionApp
 {
-    public static class GetBelarusbankInfo
+    public static class UpdateBelagroprombankInfo
     {
-        
-        [FunctionName("GetBelarusbankInfo")]
+        [FunctionName("UpdateBelagroprombankInfo")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,
             ILogger log)
         {
+
             var connectionOptions = new ConnectionOptions(
                 "https://city-rates.documents.azure.com:443/",
                 "PERNkHuRBu1W9e9oeIznbqZZ6PUDg9OOxp31pIxRfc0gw52p5GRvPo0bToNGTtoN5CQgGPC5Y3b2nDfIyMnMJg==",
                 "CityRatesDB",
-                "BelarusbankCollection"
+                "BelagroprombankCollection"
             );
 
-            var belarusbankRepo = new BelarusbankRepository(connectionOptions);
-            var belarusbankService = new BelarusbankService(belarusbankRepo);
-            var belarusbank = belarusbankService.GetBelarusbankInfo();
+            var belagroprombankRepo = new BelagroprombankRepository(connectionOptions);
+            var belagroprombankService = new BelagroprombankService(belagroprombankRepo);
+            var result = belagroprombankService.UpdateBelagroprombankInfo();
 
-            return new OkObjectResult(belarusbank);
+            return new OkObjectResult(result);
         }
     }
 }

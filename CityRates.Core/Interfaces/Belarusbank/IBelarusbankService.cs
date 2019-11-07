@@ -5,6 +5,7 @@ namespace CityRates.Core.Interfaces.Belarusbank
 {
     public interface IBelarusbankService
     {
-        List<GlobalDepartment> GetDepartmentsWithRates();
+        BelarusbankDomain UpdateBelarusbankInfo();
+        BelarusbankDomain GetBelarusbankInfo();
     }
 }

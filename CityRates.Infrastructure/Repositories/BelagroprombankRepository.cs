@@ -8,13 +8,112 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Xml.Serialization;
+using Microsoft.Azure.Documents;
+using Microsoft.Azure.Documents.Client;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace CityRates.Infrastructure.Repositories
 {
     public class BelagroprombankRepository: IBelagroprombankRepository
     {
+        private DocumentClient _client;
+        private ConnectionOptions _connectionOptions;
+
+        public BelagroprombankRepository(ConnectionOptions connectionOptions)
+        {
+            _connectionOptions = connectionOptions;
+            _client = new DocumentClient(new Uri(_connectionOptions.EndpointUrl), _connectionOptions.PrimaryKey);
+        }
+
+        public BelagroprombankDomain GetBelagroprombankInfo()
+        {
+            var json = _client.ReadDocumentAsync(UriFactory.CreateDocumentUri(_connectionOptions.DatabaseName, 
+                _connectionOptions.CollectionName, "Belagroprombank")).Result;
+            BelagroprombankDomain belagroprombankDomain = JsonConvert.DeserializeObject<BelagroprombankDomain>(json.Resource.ToString());
+            return belagroprombankDomain;
+        }
+
+        public BelagroprombankDomain UpdateBelagroprombankInfo()
+        {
+            var globalDepartments = new List<GlobalDepartment>();
+            var bankCurrencies = GetCurrencies();
+            var bankDepartments = GetBankDepartments();
+
+            var groupedCurrencies = bankCurrencies.GroupBy(c => c.FilialId);
+
+            foreach (var group in groupedCurrencies)
+            {
+                var globalDep = new GlobalDepartment { BankType = BankType.Belagroprombank };
+
+                var bank = bankDepartments.Find(dep => dep.Id == group.Key.ToString());
+
+                if (bank == null || string.IsNullOrEmpty(bank.BankLatitude) || string.IsNullOrEmpty(bank.BankLongitude))
+                {
+                    continue;
+                }
+
+                globalDep.Latitude = float.Parse(bank.BankLatitude, CultureInfo.InvariantCulture);
+                globalDep.Longitude = float.Parse(bank.BankLongitude, CultureInfo.InvariantCulture);
+
+                foreach (var currency in group)
+                {
+                    globalDep.Currencies.Add(currency);
+                }
+                globalDepartments.Add(globalDep);
+            }
+
+            var belagroprombankDomain = new BelagroprombankDomain()
+            {
+                Id = "Belagroprombank",
+                Departments = globalDepartments
+            };
+
+            BelagroprombankRepository b = new BelagroprombankRepository(_connectionOptions);
+            try
+            {
+                b.GetStartedDemo().Wait();
+            }
+            catch (DocumentClientException de)
+            {
+                Exception baseException = de.GetBaseException();
+            }
+            catch (Exception e)
+            {
+                Exception baseException = e.GetBaseException();
+            }
+            
+            CreateAsqDocumentIfNotExists(_connectionOptions.DatabaseName, _connectionOptions.CollectionName, belagroprombankDomain).Wait();
+
+            return belagroprombankDomain;
+        }
+        
+        private async Task GetStartedDemo()
+        {
+            await _client.CreateDatabaseIfNotExistsAsync(new Database { Id = _connectionOptions.DatabaseName });
+            await _client.CreateDocumentCollectionIfNotExistsAsync(UriFactory.CreateDatabaseUri(_connectionOptions.DatabaseName), new DocumentCollection { Id = _connectionOptions.CollectionName });
+        }
+
+        private async Task CreateAsqDocumentIfNotExists(string databaseName, string collectionName, BelagroprombankDomain belagroprombankDomain)
+        {
+            try
+            {
+                await _client.ReadDocumentAsync(UriFactory.CreateDocumentUri(databaseName, collectionName, belagroprombankDomain.Id));
+            }
+            catch (DocumentClientException de)
+            {
+                if (de.StatusCode == HttpStatusCode.NotFound)
+                {
+                    await _client.CreateDocumentAsync(UriFactory.CreateDocumentCollectionUri(databaseName, collectionName), belagroprombankDomain);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
         private List<Belagroprombank> GetBankDepartments()
         {
             var apiRequest =
@@ -83,7 +182,7 @@ namespace CityRates.Infrastructure.Repositories
                     BankSellsAt = currency.RateSell,
                     BankBuysAt = currency.RateBuy,
                     BankType = BankType.Belagroprombank
-                }; 
+                };
 
                 globalCurrencies.Add(globalDomain);
             }
@@ -91,36 +190,6 @@ namespace CityRates.Infrastructure.Repositories
             return globalCurrencies;
 
         }
-
-        public List<GlobalDepartment> GetDepartmentsWithRates()
-        {
-            var globalDepartments = new List<GlobalDepartment>();
-            var bankCurrencies = GetCurrencies();
-            var bankDepartments = GetBankDepartments();
-
-            var groupedCurrencies = bankCurrencies.GroupBy(c => c.FilialId);
-
-            foreach (var group in groupedCurrencies)
-            {
-                var globalDep = new GlobalDepartment { BankType = BankType.Belagroprombank };
-                var bank = bankDepartments.Single(dep => dep.Id == group.Key.ToString());
-
-                if (string.IsNullOrEmpty(bank.BankLatitude) || string.IsNullOrEmpty(bank.BankLongitude))
-                {
-                    continue;
-                }
-
-                globalDep.Lat = float.Parse(bank.BankLatitude, CultureInfo.InvariantCulture);
-                globalDep.Lng = float.Parse(bank.BankLongitude, CultureInfo.InvariantCulture);
-
-                foreach (var currency in group)
-                {
-                    globalDep.Currencies.Add(currency);
-                }
-                globalDepartments.Add(globalDep);
-            }
-
-            return globalDepartments;
-        }
+        
     }
 }
