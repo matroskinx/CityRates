@@ -1,4 +1,5 @@
-﻿using CityRates.Core.Domain;
+﻿using System.Collections.Generic;
+using CityRates.Core.Domain;
 using CityRates.Core.Interfaces.Belagroprombank;
 
 namespace CityRates.Core.Services
@@ -15,6 +16,16 @@ namespace CityRates.Core.Services
         public BelagroprombankDomain GetBelagroprombankInfo()
         {
             return _belagroprombankRepository.GetBelagroprombankInfo();
+        }
+
+        public IEnumerable<GlobalDepartment> GetFavoriteDepartments(List<int> favoriteDepartmens)
+        {
+            return _belagroprombankRepository.GetFavoriteDepartments(favoriteDepartmens);
+        }
+
+        public List<GlobalCurrency> GetGlobalCurrencies()
+        {
+            return _belagroprombankRepository.GetGlobalCurrencies();
         }
 
         public BelagroprombankDomain UpdateBelagroprombankInfo()

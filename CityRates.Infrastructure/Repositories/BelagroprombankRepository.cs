@@ -28,6 +28,56 @@ namespace CityRates.Infrastructure.Repositories
             _client = new DocumentClient(new Uri(_connectionOptions.EndpointUrl), _connectionOptions.PrimaryKey);
         }
 
+        public IEnumerable<GlobalDepartment> GetFavoriteDepartments(List<int> favoriteDepartmens)
+        {
+            var belagroprombankDomain = GetBelagroprombankInfo();
+            var result = belagroprombankDomain.Departments.Where(t2 => favoriteDepartmens.Any(t1 => t2.Id == t1));
+
+            return result;
+        }
+
+        public List<GlobalCurrency> GetGlobalCurrencies()
+        {
+            var apiRequest =
+                WebRequest.Create("https://belapb.by/ExCardsDaily.php?ondate=11/06/2019") as HttpWebRequest;
+
+            string apiResponse;
+            using (var response = apiRequest?.GetResponse() as HttpWebResponse)
+            {
+                var reader = new StreamReader(response.GetResponseStream());
+                apiResponse = reader.ReadToEnd();
+                reader.Close();
+            }
+
+            DailyExCards result;
+
+            var serializer = new XmlSerializer(typeof(DailyExCards));
+            using (TextReader reader = new StringReader(apiResponse))
+            {
+                result = (DailyExCards)serializer.Deserialize(reader);
+            }
+
+            var globalCurrencyList = new List<GlobalCurrency>();
+           
+            foreach (var res in result.Currency)
+            {
+                if (res.CharCode == "USD" || res.CharCode == "EUR" || res.CharCode == "RUB")
+                {
+                    CurrencyType type = (CurrencyType)Enum.Parse(typeof(CurrencyType), res.CharCode);
+                    var currency = new GlobalCurrency
+                    {
+                        BankType = BankType.Belagroprombank,
+                        FromCurrency = CurrencyType.BYN,
+                        ToCurrency = type,
+                        BankBuysAt = res.RateBuy,
+                        BankSellsAt = res.RateSell
+                    };
+                    globalCurrencyList.Add(currency);
+                }
+            }
+            return globalCurrencyList;
+        }
+        
         public BelagroprombankDomain GetBelagroprombankInfo()
         {
             var json = _client.ReadDocumentAsync(UriFactory.CreateDocumentUri(_connectionOptions.DatabaseName,
@@ -73,6 +123,9 @@ namespace CityRates.Infrastructure.Repositories
                 {
                     globalDep.Currencies.Add(currency);
                 }
+
+                globalDep.Address = bank.BankAddressRu;
+                globalDep.Id = Convert.ToInt32(bank.Id);
                 globalDepartments.Add(globalDep);
             }
 
@@ -154,7 +207,7 @@ namespace CityRates.Infrastructure.Repositories
         {
             var date = DateTime.Now.ToString("MM/dd/yyyy");
             var apiRequest =
-                WebRequest.Create("https://belapb.by/CashExRatesDaily.php?ondate=" + date) as HttpWebRequest;
+                WebRequest.Create("https://belapb.by/CashExRatesDaily.php?ondate=11/08/2019") as HttpWebRequest;
 
             string apiResponse;
             using (var response = apiRequest?.GetResponse() as HttpWebResponse)

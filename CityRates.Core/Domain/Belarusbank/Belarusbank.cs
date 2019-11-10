@@ -13,6 +13,21 @@ namespace CityRates.Core.Domain.Belarusbank
         [JsonProperty("filial_name")]
         public string FilialName { get; set; }
 
+        [JsonProperty("name_type")]
+        public string NameType { get; set; }
+
+        [JsonProperty("name")]
+        public string Name { get; set; }
+
+        [JsonProperty("street_type")]
+        public string StreetType { get; set; }
+
+        [JsonProperty("street")]
+        public string Street { get; set; }
+
+        [JsonProperty("home_number")]
+        public string HomeNumber { get; set; }
+
         [JsonProperty("info_text")]
         public string InfoText { get; set; }
 

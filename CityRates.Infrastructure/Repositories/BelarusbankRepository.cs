@@ -28,6 +28,60 @@ namespace CityRates.Infrastructure.Repositories
             _client = new DocumentClient(new Uri(_connectionOptions.EndpointUrl), _connectionOptions.PrimaryKey);
         }
 
+        public IEnumerable<GlobalDepartment> GetFavoriteDepartments(List<int> favoriteDepartmens)
+        {
+            var belarusbankDomain = GetBelarusbankInfo();
+            var result = belarusbankDomain.Departments.Where(t2 => favoriteDepartmens.Any(t1 => t2.Id == t1));
+
+            return result;
+        }
+
+        public List<GlobalCurrency> GetGlobalCurrencies()
+        {
+            var apiRequest =
+                WebRequest.Create("https://belarusbank.by/api/kurs_cards") as HttpWebRequest;
+
+            string apiResponse;
+            using (var response = apiRequest?.GetResponse() as HttpWebResponse)
+            {
+                var reader = new StreamReader(response.GetResponseStream());
+                apiResponse = reader.ReadToEnd();
+                reader.Close();
+            }
+
+            var result = JsonConvert.DeserializeObject<List<BelarusbankCardsRates>>(apiResponse)[0];
+            var globalCurrencyList = new List<GlobalCurrency>();
+            var USDCurrency = new GlobalCurrency
+            {
+                BankType = BankType.Belarusbank,
+                FromCurrency = CurrencyType.BYN,
+                ToCurrency = CurrencyType.USD,
+                BankBuysAt = result.USDCARD_in,
+                BankSellsAt = result.USDCARD_out
+            };
+            globalCurrencyList.Add(USDCurrency);
+            var EURCurrency = new GlobalCurrency
+            {
+                BankType = BankType.Belarusbank,
+                FromCurrency = CurrencyType.BYN,
+                ToCurrency = CurrencyType.EUR,
+                BankBuysAt = result.EURCARD_in,
+                BankSellsAt = result.EURCARD_out
+            };
+            globalCurrencyList.Add(EURCurrency);
+            var RUBCurrency = new GlobalCurrency
+            {
+                BankType = BankType.Belarusbank,
+                FromCurrency = CurrencyType.BYN,
+                ToCurrency = CurrencyType.RUB,
+                BankBuysAt = result.RUBCARD_in,
+                BankSellsAt = result.RUBCARD_out
+            };
+            globalCurrencyList.Add(RUBCurrency);
+
+            return globalCurrencyList;
+        }
+
         public BelarusbankDomain GetBelarusbankInfo()
         {
             var json = _client.ReadDocumentAsync(UriFactory.CreateDocumentUri(_connectionOptions.DatabaseName,
@@ -73,6 +127,10 @@ namespace CityRates.Infrastructure.Repositories
                 {
                     globalDep.Currencies.Add(currency);
                 }
+
+                globalDep.Address = bank.NameType + " " + bank.Name + " " + bank.StreetType + " " + bank.Street + " " +
+                                    bank.HomeNumber;
+                globalDep.Id = bank.FilialId;
                 globalDepartments.Add(globalDep);
             }
 

@@ -16,7 +16,8 @@ namespace CityRates.ConsoleApp
                 "BelagroprombankCollection"
             );
 
-            //var belagroprombankRepo = new BelagroprombankRepository(connectionOptions);
+            var belagroprombankRepo = new BelagroprombankRepository(connectionOptions);
+            belagroprombankRepo.GetGlobalCurrencies();
             //var belagroprombankService = new BelagroprombankService(belagroprombankRepo);
             //belagroprombankService.UpdateBelagroprombankInfo();
 
@@ -30,8 +31,15 @@ namespace CityRates.ConsoleApp
             //);
 
             //var belarusbankRepository = new BelarusbankRepository(connectionOptions);
+            //belarusbankRepository.GetGlobalCurrencies();
+
             //var belarusbankService = new BelarusbankService(belarusbankRepository);
             //var result = belarusbankService.UpdateBelarusbankInfo();
+
+            //var nationalBankRepository = new NationalBankRepository();
+            //var nationalBankService = new NationalBankService(nationalBankRepository);
+            //nationalBankService.GetNBRates();
+
 
         }
     }
