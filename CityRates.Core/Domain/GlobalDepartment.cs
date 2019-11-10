@@ -7,7 +7,11 @@ namespace CityRates.Core.Domain
 {
     public class GlobalDepartment
     {
+        public int Id { get; set; }
+
         public BankType BankType { get; set; }
+
+        public string Address { get; set; }
 
         public float Latitude { get; set; }
 

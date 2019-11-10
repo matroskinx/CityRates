@@ -7,5 +7,7 @@ namespace CityRates.Core.Interfaces.Belagroprombank
     {
         BelagroprombankDomain UpdateBelagroprombankInfo();
         BelagroprombankDomain GetBelagroprombankInfo();
+        List<GlobalCurrency> GetGlobalCurrencies();
+        IEnumerable<GlobalDepartment> GetFavoriteDepartments(List<int> favoriteDepartmens);
     }
 }

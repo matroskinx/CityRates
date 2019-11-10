@@ -7,5 +7,7 @@ namespace CityRates.Core.Interfaces.Belarusbank
     {
         BelarusbankDomain UpdateBelarusbankInfo();
         BelarusbankDomain GetBelarusbankInfo();
+        List<GlobalCurrency> GetGlobalCurrencies();
+        IEnumerable<GlobalDepartment> GetFavoriteDepartments(List<int> favoriteDepartmens);
     }
 }

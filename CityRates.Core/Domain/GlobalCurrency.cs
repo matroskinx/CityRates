@@ -17,12 +17,12 @@ namespace CityRates.Core.Domain
         public BankType BankType { get; set; }
 
         public GlobalCurrency(
-            int filialId,
             CurrencyType fromCurrency,
             CurrencyType toCurrency,
             double bankSellsAt,
             double bankBuysAt,
-            BankType bankType
+            BankType bankType,
+            int filialId = 0
         )
         {
             FilialId = filialId;

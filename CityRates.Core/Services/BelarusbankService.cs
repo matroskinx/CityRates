@@ -21,6 +21,16 @@ namespace CityRates.Core.Services
             return _belarusbankRepository.GetBelarusbankInfo();
         }
 
+        public IEnumerable<GlobalDepartment> GetFavoriteDepartments(List<int> favoriteDepartmens)
+        {
+            return _belarusbankRepository.GetFavoriteDepartments(favoriteDepartmens);
+        }
+
+        public List<GlobalCurrency> GetGlobalCurrencies()
+        {
+            return _belarusbankRepository.GetGlobalCurrencies();
+        }
+
         public BelarusbankDomain UpdateBelarusbankInfo()
         {
             return _belarusbankRepository.UpdateBelarusbankInfo();
