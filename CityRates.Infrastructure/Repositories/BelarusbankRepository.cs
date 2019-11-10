@@ -57,6 +57,7 @@ namespace CityRates.Infrastructure.Repositories
                 try
                 {
                     globalDep.WorkInfo = WorkTimeUtils.parseDateTimeFromBelarusbank(bank);
+                    globalDep.IsOpen = WorkTimeUtils.isWorkingNow(globalDep.WorkInfo);
                 }
                 catch (Exception)
                 {

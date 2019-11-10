@@ -58,6 +58,7 @@ namespace CityRates.Infrastructure.Repositories
                 try
                 {
                     globalDep.WorkInfo = WorkTimeUtils.parseDateTimeFromBelagroprombank(bank);
+                    globalDep.IsOpen = WorkTimeUtils.isWorkingNow(globalDep.WorkInfo);
                 }
                 catch (Exception)
                 {

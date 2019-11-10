@@ -35,7 +35,8 @@ namespace CityRates.Core.Utils
                     if (day.Equals("SAT") || day.Equals("SUN"))
                     {
                         workTimes.Add(new WorkTime(day, true));
-                    } else
+                    }
+                    else
                     {
                         workTimes.Add(new WorkTime(day, openMinutesFromDayStart, closeMinutesFromDayStart));
                     }
@@ -87,6 +88,37 @@ namespace CityRates.Core.Utils
             }
 
             return workTimes;
+        }
+
+        public static bool isWorkingNow(List<WorkTime> workInfo)
+        {
+            DateTime time = DateTime.Now;
+            string day = time.DayOfWeek.ToString();
+            WorkTime workTime = getWorkTimeByDay(workInfo, day);
+            int hour = time.Hour;
+
+            if (workTime.isDayOff)
+            {
+                return false;
+            }
+            else if (hour >= workTime.WorkStartInMinutes / 60 && hour <= workTime.WorkEndInMinutes / 60)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private static WorkTime getWorkTimeByDay(List<WorkTime> workInfo, String day)
+        {
+            foreach (WorkTime workTime in workInfo)
+            {
+                if (day.ToLower().StartsWith(workTime.DayName.ToLower()))
+                {
+                    return workTime;
+                }
+            }
+
+            throw new Exception("Unable to get worktime for day: " + day);
         }
 
         private static WorkTime getWorkTimeFromString(string dayName, string fromTime, string toTime)

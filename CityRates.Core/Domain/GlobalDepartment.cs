@@ -17,6 +17,7 @@ namespace CityRates.Core.Domain
 
         public List<WorkTime> WorkInfo { get; set; } = new List<WorkTime>();
 
+        public bool IsOpen { get; set; }
         // TODO: get work hours
     }
 }

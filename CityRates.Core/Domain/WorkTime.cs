@@ -6,11 +6,11 @@ namespace CityRates.Core.Domain
 {
     public class WorkTime
     {
-        int WorkStartInMinutes { get; set; }
-        int WorkEndInMinutes { get; set; }
-        string DayName { get; set; }
+        public int WorkStartInMinutes { get; set; }
+        public int WorkEndInMinutes { get; set; }
+        public string DayName { get; set; }
 
-        bool isDayOff { get; set; }
+        public bool isDayOff { get; set; }
 
         public WorkTime(string dayName, int start, int end)
         {
